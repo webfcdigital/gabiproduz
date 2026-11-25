@@ -9,16 +9,17 @@
 
 Este projeto foi desenvolvido em estrita conformidade com o **PRD — Sistema de Gestão Integrada para Produtora de Eventos**:
 
-* **Frontend & Backend Full-Stack:** Desenvolvido em **Next.js 16 (App Router)** com **React 19**, **TypeScript** e **Tailwind CSS**, otimizado para deploy contínuo na **Vercel**.
-* **Controle de Versão:** Pronto para versionamento e repositório público/privado no **GitHub**.
-* **Banco de Dados:** Camada flexível preparada para bancos relacionais na nuvem (Supabase / PostgreSQL, Neon ou MongoDB) com persistência local reativa em tempo de execução via LocalStorage.
-* **Integração Google Workspace (Drive & Docs):** Geração automática por evento de pasta estruturada e dos 4 artefatos padrões, editáveis em tempo real dentro do painel.
+* **Frontend & Backend Full-Stack:** Desenvolvido em **Next.js 16 (App Router)** com **React 19**, **TypeScript** e **Tailwind CSS**.
+* **Deploy Nativo na Vercel:** O projeto está estruturado diretamente na raiz do repositório, permitindo que a Vercel detecte automaticamente o framework **Next.js** com build e cache otimizados de **Zero-Configuração**.
+* **Controle de Versão:** Código versionado em repositório **Git** pronto para envio ao **GitHub**.
+* **Banco de Dados:** Camada flexível preparada para bancos relacionais (Supabase / PostgreSQL, Neon ou MongoDB) com persistência local reativa em tempo de execução via LocalStorage.
+* **Integração Google Workspace (Drive & Docs):** Geração automática de pasta estruturada e dos 4 artefatos padrões por evento, com visualização e edição dentro do painel.
 
 ---
 
 ## 2. Perfis de Acesso (RBAC) Implementados
 
-A aplicação conta com um alternador de perfil no topo (*Role Switcher*) que permite testar instantaneamente os 4 perfis previstos no PRD:
+A aplicação conta com um alternador de perfil no topo (*Role Switcher*) para testar instantaneamente os 4 perfis previstos no PRD:
 
 | Perfil | Escopo e Permissões no Painel |
 | :--- | :--- |
@@ -68,13 +69,10 @@ Ao cadastrar qualquer evento (ou nos eventos pré-carregados como o *Happy Hour 
 Requisitos: **Node.js 18+** e **npm**.
 
 ```bash
-# 1. Acesse a pasta da aplicação
-cd sistema
-
-# 2. Instale as dependências (já instaladas)
+# 1. Instale as dependências (caso necessário)
 npm install
 
-# 3. Inicie o servidor de desenvolvimento
+# 2. Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
@@ -82,25 +80,19 @@ Abra no seu navegador: `http://localhost:3000`.
 
 ---
 
-## 5. Como Publicar no GitHub e na Vercel
+## 5. Como Fazer o Deploy na Vercel (Zero-Config)
 
-### Publicação no GitHub:
-```bash
-# Na raiz do projeto:
-git init
-git add .
-git commit -m "feat: Sistema de Gestão Integrada para Produtora de Eventos"
-git branch -M main
-git remote add origin https://github.com/<seu-usuario>/GabiProduz.git
-git push -u origin main
-```
+A aplicação agora está configurada na raiz do repositório, garantindo compatibilidade automática nativa com a Vercel.
 
-### Deploy na Vercel:
-1. Acesse [vercel.com](https://vercel.com) e conecte sua conta do GitHub.
-2. Importe o repositório **GabiProduz**.
-3. O arquivo `vercel.json` já está configurado para realizar o build automaticamente:
-   - **Framework Preset:** Next.js
-   - **Build Command:** `cd sistema && npm run build`
-   - **Output Directory:** `sistema/.next`
-4. Clique em **Deploy**. A aplicação estará online e acessível publicamente em segundos!
-
+1. Faça o push das alterações para o seu repositório no GitHub:
+   ```bash
+   git push origin main
+   ```
+2. No painel da **Vercel** ([vercel.com](https://vercel.com)):
+   - Se for um novo deploy: importe o repositório **GabiProduz** e clique em **Deploy** com as configurações padrões (Next.js automático).
+   - Se o projeto já estava criado na Vercel:
+     - Vá em **Project Settings** $\rightarrow$ **General**;
+     - Certifique-se de que o campo **Root Directory** esteja vazio (ou como `./`);
+     - Certifique-se de que as opções **Build Command** e **Install Command** estejam no padrão (com o toggle "Override" desligado);
+     - Vá na aba **Deployments** e clique em **Redeploy**.
+3. O deploy será concluído em menos de 1 minuto!
