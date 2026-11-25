@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GabiProduz — Central Operacional & Comercial</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap');
+
+    :root {
+      --plum: #48243F;
+      --plum-light: #5E3253;
+      --plum-dark: #2F1528;
+      --mustard: #B18A38;
+      --mustard-light: #CBA24B;
+      --mustard-soft: rgba(177, 138, 56, 0.12);
+      --graphite: #34313B;
+      --gray-light: #F4F1ED;
+      --sand: #FAF7F2;
+      --white: #FFFFFF;
+      --border: #E3DBD0;
+      --success: #2E7D32;
+      --warning: #ED6C02;
+      --danger: #D32F2F;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--sand);
+      color: var(--graphite);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* Topbar */
+    header {
+      background: linear-gradient(135deg, var(--plum) 0%, var(--plum-dark) 100%);
+      color: var(--white);
+      padding: 24px 36px;
+      box-shadow: 0 4px 16px rgba(47, 21, 40, 0.15);
+      border-bottom: 3px solid var(--mustard);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .logo-area h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .logo-area p {
+      font-size: 13px;
+      color: var(--mustard-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    .tagline {
+      font-size: 13px;
+      font-style: italic;
+      color: #E2D7E0;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+
+    /* Nav Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      color: #6E6877;
+      padding: 12px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--plum);
+    }
+
+    .tab-btn.active {
+      color: var(--plum);
+      border-bottom-color: var(--mustard);
+      font-weight: 700;
+    }
+
+    /* Card Panels */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(52, 49, 59, 0.04);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--plum);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: #7A7584;
+      margin-bottom: 20px;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    /* Form Inputs */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--plum);
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--graphite);
+      background: var(--white);
+      transition: border 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--mustard);
+      box-shadow: 0 0 0 3px var(--mustard-soft);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      background-color: var(--plum);
+      color: var(--white);
+      border: none;
+      padding: 11px 20px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--plum-light);
+    }
+
+    .btn-secondary {
+      background-color: var(--gray-light);
+      color: var(--plum);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: #E7E0D6;
+    }
+
+    .btn-mustard {
+      background-color: var(--mustard);
+      color: white;
+    }
+
+    .btn-mustard:hover {
+      background-color: var(--mustard-light);
+    }
+
+    /* Progress & Status */
+    .progress-wrapper {
+      margin: 18px 0;
+    }
+
+    .progress-bar-bg {
+      height: 16px;
+      background: #EAE3DA;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease, background-color 0.3s;
+    }
+
+    .progress-status {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-success { background: #E8F5E9; color: #1B5E20; border: 1px solid #C8E6C9; }
+    .alert-warning { background: #FFF3E0; color: #E65100; border: 1px solid #FFE0B2; }
+    .alert-danger { background: #FFEBEE; color: #B71C1C; border: 1px solid #FFCDD2; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 13.5px;
+    }
+
+    th {
+      background: var(--sand);
+      color: var(--plum);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tag-green { background: #E8F5E9; color: #2E7D32; }
+    .tag-orange { background: #FFF3E0; color: #ED6C02; }
+    .tag-red { background: #FFEBEE; color: #D32F2F; }
+
+    /* Summary Box */
+    .summary-card {
+      background: var(--sand);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .summary-row.total {
+      border-top: 2px solid var(--mustard);
+      padding-top: 12px;
+      margin-top: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--plum);
+    }
+
+    .badge-signal {
+      background: var(--mustard);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo-area">
+        <h1>Gabriela Prieto</h1>
+        <p>Produção Executiva Musical</p>
+      </div>
+      <div class="tagline">
+        "Ideias que acontecem." — Central Operacional & Comercial
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="openTab('tab-simulador')">Simulador de Orçamento</button>
+      <button class="tab-btn" onclick="openTab('tab-horas')">Rastreador de Horas (Pré-Produção)</button>
+      <button class="tab-btn" onclick="openTab('tab-reembolso')">Cálculo de Deslocamento & Km (R$ 1,50/km)</button>
+    </div>
+
+    <!-- ABA 1: SIMULADOR DE PROPOSTA -->
+    <div id="tab-simulador" class="tab-content active">
+      <div class="grid-2">
+        
+        <!-- Formulário de Seleção -->
+        <div class="card">
+          <h2 class="card-title">Compor Proposta Comercial</h2>
+          <p class="card-subtitle">Configure os serviços e diárias conforme o escopo do projeto.</p>
+          
+          <div class="form-group">
+            <label>Pacote de Pré-Produção:</label>
+            <select id="sim-pacote" onchange="calcularOrcamento()">
+              <option value="0">Sem pré-produção (Apenas acompanhamento no dia)</option>
+              <option value="350">Essencial (Até 5h de planejamento) — R$ 350,00</option>
+              <option value="600" selected>Intermediária (Até 9h de planejamento) — R$ 600,00</option>
+              <option value="900">Completa (Até 14h de planejamento) — R$ 900,00</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Diárias de Produção Presencial (R$ 650/diária):</label>
+            <input type="number" id="sim-diarias" min="0" value="1" oninput="calcularOrcamento()">
+          </div>
+
+          <div class="form-group">
+            <label>Visitas Técnicas Presenciais Antecipadas (R$ 180 cada):</label>
+            <input type="number" id="sim-visitas" min="0" value="0" oninput="calcularOrcamento()">
+          </div>
+
+          <div class="form-group">
+            <label>Estimativa de Quilometragem Total (Ida + Volta):</label>
+            <div class="form-row">
+              <input type="number" id="sim-km" min="0" value="40" placeholder="Km total" oninput="calcularOrcamento()">
+              <span style="display:flex;align-items:center;font-size:13px;white-space:nowrap;color:var(--mustard);font-weight:600;">x R$ 1,50/km</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Serviços Adicionais:</label>
+            <label style="font-weight:normal;font-size:13px;display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <input type="checkbox" id="sim-audiovisual" style="width:auto;" onchange="calcularOrcamento()">
+              Captação Audiovisual Bruta (Vídeos e fotos de bastidores) (+ R$ 300,00)
+            </label>
+          </div>
+        </div>
+
+        <!-- Resumo da Proposta -->
+        <div class="card">
+          <h2 class="card-title">Resumo Financeiro da Proposta</h2>
+          <p class="card-subtitle">Aplicação automática da regra de sinal de 40% (Spec 3).</p>
+
+          <div class="summary-card">
+            <div class="summary-row">
+              <span>Pré-Produção:</span>
+              <strong id="res-pre">R$ 600,00</strong>
+            </div>
+            <div class="summary-row">
+              <span>Produção Presencial:</span>
+              <strong id="res-diarias">R$ 650,00</strong>
+            </div>
+            <div class="summary-row">
+              <span>Visitas Técnicas:</span>
+              <strong id="res-visitas">R$ 0,00</strong>
+            </div>
+            <div class="summary-row">
+              <span>Deslocamento com Veículo (R$ 1,50/km):</span>
+              <strong id="res-km">R$ 60,00</strong>
+            </div>
+            <div class="summary-row">
+              <span>Serviços Adicionais:</span>
+              <strong id="res-extra">R$ 0,00</strong>
+            </div>
+            
+            <div class="summary-row total">
+              <span>TOTAL ESTIMADO:</span>
+              <span id="res-total" style="color:var(--plum);">R$ 1.310,00</span>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;padding:16px;background:var(--mustard-soft);border-radius:6px;border-left:4px solid var(--mustard);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <span style="font-size:13px;font-weight:700;color:var(--plum);">Sinal de Reserva de Data (40%):</span>
+              <span id="res-sinal" style="font-size:16px;font-weight:700;color:var(--plum);">R$ 524,00</span>
+            </div>
+            <small style="font-size:12px;color:#5A5462;display:block;">
+              Pago na confirmação para garantia da data na agenda (Spec 3).
+            </small>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px dashed #D3C3B0;">
+              <span style="font-size:13px;font-weight:600;color:var(--plum);">Saldo Restante (60%):</span>
+              <span id="res-saldo" style="font-size:14px;font-weight:600;color:var(--plum);">R$ 786,00</span>
+            </div>
+            <small style="font-size:12px;color:#5A5462;display:block;">
+              Quitado em até 24h antes do evento.
+            </small>
+          </div>
+
+          <div style="margin-top:20px;">
+            <button class="btn btn-mustard" style="width:100%;" onclick="copiarResumoProposta()">
+              Copiar Texto Formatado para WhatsApp/E-mail
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ABA 2: RASTREADOR DE HORAS -->
+    <div id="tab-horas" class="tab-content">
+      <div class="card">
+        <h2 class="card-title">Rastreio de Horas de Pré-Produção</h2>
+        <p class="card-subtitle">Controle em tempo real para proteção de escopo (Spec 1: Limite contratual e adicional a R$ 70/h).</p>
+
+        <div class="grid-3" style="margin-bottom:18px;">
+          <div>
+            <label>Projeto / Cliente:</label>
+            <input type="text" id="time-projeto" value="Show Corporativo - 10/12/2026">
+          </div>
+          <div>
+            <label>Pacote Contratado:</label>
+            <select id="time-limite" onchange="atualizarProgressoHoras()">
+              <option value="5">Essencial (Teto: 5 horas)</option>
+              <option value="9" selected>Intermediária (Teto: 9 horas)</option>
+              <option value="14">Completa (Teto: 14 horas)</option>
+            </select>
+          </div>
+          <div>
+            <label>Status Geral:</label>
+            <div id="status-badge" style="margin-top:8px;"></div>
+          </div>
+        </div>
+
+        <!-- Barra de Progresso Visual -->
+        <div class="progress-wrapper">
+          <div class="progress-bar-bg">
+            <div id="progress-fill" class="progress-bar-fill"></div>
+          </div>
+          <div class="progress-status">
+            <span id="progress-text-used">Horas Lançadas: 0.0h</span>
+            <span id="progress-text-limit">Limite: 9.0h</span>
+          </div>
+        </div>
+
+        <div id="alerta-box"></div>
+
+        <!-- Lançamento de Atividade -->
+        <div style="background:var(--sand);padding:18px;border-radius:8px;border:1px solid var(--border);margin-top:24px;">
+          <h3 style="font-size:15px;color:var(--plum);margin-bottom:12px;">Registrar Nova Atividade de Pré-Produção</h3>
+          <div class="grid-3">
+            <div>
+              <label>Data:</label>
+              <input type="date" id="lanc-data">
+            </div>
+            <div>
+              <label>Tipo de Atividade:</label>
+              <select id="lanc-tipo">
+                <option value="Reunião">Reunião Online</option>
+                <option value="Briefing">Briefing / Levantamento</option>
+                <option value="Cronograma">Montagem de Cronograma</option>
+                <option value="Logística/Fornecedor">Contato com Fornecedores</option>
+                <option value="Acessos/Staff">Credenciamento & Equipe</option>
+                <option value="Outros">Outras Demandas</option>
+              </select>
+            </div>
+            <div>
+              <label>Horas Gastas (ex: 1.5):</label>
+              <input type="number" id="lanc-horas" step="0.25" min="0.25" placeholder="ex: 1.5">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:10px;">
+            <label>Descrição Detalhada:</label>
+            <input type="text" id="lanc-desc" placeholder="Ex: Alinhamento de rider técnico com técnico de som da banda">
+          </div>
+          <button class="btn" onclick="adicionarAtividade()">Adicionar Registro</button>
+        </div>
+
+        <!-- Tabela de Registros -->
+        <table style="margin-top:24px;">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th class="text-center">Horas</th>
+              <th class="text-right">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-atividades">
+            <!-- Linhas dinâmicas -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ABA 3: REEMBOLSO & DESLOCAMENTO -->
+    <div id="tab-reembolso" class="tab-content">
+      <div class="card">
+        <h2 class="card-title">Gestão de Custos e Reembolso de Deslocamento</h2>
+        <p class="card-subtitle">Aplicação oficial da tarifa de R$ 1,50/km (Spec 2) e separação de despesas operacionais.</p>
+
+        <div style="background:var(--sand);padding:18px;border-radius:8px;border:1px solid var(--border);margin-bottom:24px;">
+          <h3 style="font-size:15px;color:var(--plum);margin-bottom:12px;">Lançar Novo Deslocamento / Despesa</h3>
+          <div class="grid-3">
+            <div>
+              <label>Data:</label>
+              <input type="date" id="reemb-data">
+            </div>
+            <div>
+              <label>Destino / Motivo:</label>
+              <input type="text" id="reemb-destino" placeholder="Ex: Hotel Terras Raras (Visita Técnica)">
+            </div>
+            <div>
+              <label>Km Total (Ida + Volta):</label>
+              <input type="number" id="reemb-km" placeholder="ex: 40" oninput="calcularTotalLinhaReembolso()">
+            </div>
+          </div>
+          <div class="grid-3" style="margin-top:10px;">
+            <div>
+              <label>Estacionamento (R$):</label>
+              <input type="number" id="reemb-estac" step="0.5" placeholder="0.00" oninput="calcularTotalLinhaReembolso()">
+            </div>
+            <div>
+              <label>Zona Azul (R$):</label>
+              <input type="number" id="reemb-zonaazul" step="0.5" placeholder="0.00" oninput="calcularTotalLinhaReembolso()">
+            </div>
+            <div>
+              <label>Pedágios (R$):</label>
+              <input type="number" id="reemb-pedagio" step="0.5" placeholder="0.00" oninput="calcularTotalLinhaReembolso()">
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;color:#6E6877;">
+              Valor de km calculado a <strong>R$ 1,50/km</strong> automaticamente.
+            </span>
+            <button class="btn" onclick="adicionarReembolso()">Registrar Despesa</button>
+          </div>
+        </div>
+
+        <!-- Tabela de Reembolsos -->
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Destino / Descrição</th>
+              <th class="text-center">Km Total</th>
+              <th class="text-right">Km (R$ 1,50)</th>
+              <th class="text-right">Outros (Zona Azul / Estacionamento / Pedágio)</th>
+              <th class="text-right">Total a Reembolsar</th>
+              <th class="text-right">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-reembolso">
+            <!-- Linhas dinâmicas -->
+          </tbody>
+          <tfoot>
+            <tr style="background:var(--sand);font-weight:700;color:var(--plum);">
+              <td colspan="5">TOTAL GERAL DE REEMBOLSOS A RECEBER DO CLIENTE:</td>
+              <td class="text-right" id="total-geral-reembolso">R$ 0,00</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div style="margin-top:20px;text-align:right;">
+          <button class="btn btn-secondary" onclick="copiarRelatorioReembolso()">
+            Copiar Demonstrativo para Prestação de Contas
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Gerenciamento de Abas
+    function openTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // ABA 1: CÁLCULOS DO SIMULADOR
+    function calcularOrcamento() {
+      const vPre = parseFloat(document.getElementById('sim-pacote').value) || 0;
+      const nDiarias = parseInt(document.getElementById('sim-diarias').value) || 0;
+      const vDiarias = nDiarias * 650;
+      const nVisitas = parseInt(document.getElementById('sim-visitas').value) || 0;
+      const vVisitas = nVisitas * 180;
+      const km = parseFloat(document.getElementById('sim-km').value) || 0;
+      const vKm = km * 1.50;
+      const audio = document.getElementById('sim-audiovisual').checked ? 300 : 0;
+
+      const total = vPre + vDiarias + vVisitas + vKm + audio;
+      const sinal = total * 0.40;
+      const saldo = total * 0.60;
+
+      document.getElementById('res-pre').innerText = 'R$ ' + vPre.toFixed(2).replace('.', ',');
+      document.getElementById('res-diarias').innerText = 'R$ ' + vDiarias.toFixed(2).replace('.', ',');
+      document.getElementById('res-visitas').innerText = 'R$ ' + vVisitas.toFixed(2).replace('.', ',');
+      document.getElementById('res-km').innerText = 'R$ ' + vKm.toFixed(2).replace('.', ',');
+      document.getElementById('res-extra').innerText = 'R$ ' + audio.toFixed(2).replace('.', ',');
+      document.getElementById('res-total').innerText = 'R$ ' + total.toFixed(2).replace('.', ',');
+      document.getElementById('res-sinal').innerText = 'R$ ' + sinal.toFixed(2).replace('.', ',');
+      document.getElementById('res-saldo').innerText = 'R$ ' + saldo.toFixed(2).replace('.', ',');
+    }
+
+    function copiarResumoProposta() {
+      const total = document.getElementById('res-total').innerText;
+      const sinal = document.getElementById('res-sinal').innerText;
+      const saldo = document.getElementById('res-saldo').innerText;
+      const texto = `*PROPOSTA COMERCIAL — GABRIELA PRIETO PRODUÇÃO EXECUTIVA*\n"Ideias que acontecem."\n\n` +
+        `• Pré-produção: ${document.getElementById('res-pre').innerText}\n` +
+        `• Produção presencial: ${document.getElementById('res-diarias').innerText}\n` +
+        `• Deslocamento estimado (R$ 1,50/km): ${document.getElementById('res-km').innerText}\n` +
+        `-----------------------------------------\n` +
+        `*INVESTIMENTO TOTAL:* ${total}\n` +
+        `*SINAL DE RESERVA DE DATA (40%):* ${sinal} (garante o bloqueio da data na agenda)\n` +
+        `*SALDO RESTANTE (60%):* ${saldo} (em até 24h antes do evento)\n\n` +
+        `_Despesas de estacionamento e pedágio são reembolsadas mediante comprovante._`;
+
+      navigator.clipboard.writeText(texto).then(() => {
+        alert('Resumo copiado com sucesso para a área de transferência!');
+      });
+    }
+
+    // ABA 2: RASTREADOR DE HORAS
+    let atividades = JSON.parse(localStorage.getItem('gp_atividades')) || [
+      { id: 1, data: '2026-11-10', tipo: 'Reunião', desc: 'Alinhamento inicial com cliente', horas: 1.0 },
+      { id: 2, data: '2026-11-12', tipo: 'Briefing', desc: 'Preenchimento de briefing técnico e rider', horas: 1.5 },
+      { id: 3, data: '2026-11-14', tipo: 'Logística/Fornecedor', desc: 'Alinhamento com técnicos de som e espaço', horas: 2.0 },
+      { id: 4, data: '2026-11-16', tipo: 'Cronograma', desc: 'Montagem de cronograma minuto a minuto', horas: 2.0 }
+    ];
+
+    function renderAtividades() {
+      const tbody = document.getElementById('tabela-atividades');
+      tbody.innerHTML = '';
+      let totalHoras = 0;
+
+      atividades.forEach(a => {
+        totalHoras += a.horas;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${formatarData(a.data)}</td>
+          <td><span class="tag tag-green">${a.tipo}</span></td>
+          <td>${a.desc}</td>
+          <td class="text-center"><strong>${a.horas.toFixed(2)}h</strong></td>
+          <td class="text-right">
+            <button style="border:none;background:none;color:#D32F2F;cursor:pointer;font-weight:bold;" onclick="excluirAtividade(${a.id})">✕</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      atualizarProgressoHoras(totalHoras);
+      localStorage.setItem('gp_atividades', JSON.stringify(atividades));
+    }
+
+    function atualizarProgressoHoras(totalHoras) {
+      if (totalHoras === undefined) {
+        totalHoras = atividades.reduce((acc, a) => acc + a.horas, 0);
+      }
+      const limite = parseFloat(document.getElementById('time-limite').value) || 9;
+      const perc = (totalHoras / limite) * 100;
+      const fill = document.getElementById('progress-fill');
+      const badge = document.getElementById('status-badge');
+      const alerta = document.getElementById('alerta-box');
+
+      document.getElementById('progress-text-used').innerText = `Horas Lançadas: ${totalHoras.toFixed(2)}h`;
+      document.getElementById('progress-text-limit').innerText = `Limite: ${limite.toFixed(1)}h`;
+
+      fill.style.width = Math.min(perc, 100) + '%';
+
+      if (perc < 80) {
+        fill.style.backgroundColor = 'var(--success)';
+        badge.innerHTML = '<span class="tag tag-green">Dentro do Pacote</span>';
+        alerta.innerHTML = '';
+      } else if (perc <= 100) {
+        fill.style.backgroundColor = 'var(--warning)';
+        badge.innerHTML = '<span class="tag tag-orange">Alerta 80% Atingido</span>';
+        alerta.innerHTML = `
+          <div class="alert alert-warning">
+            ⚠️ <strong>Atenção ao Escopo:</strong> Você atingiu ${perc.toFixed(0)}% da franquia deste pacote. Caso novas demandas surjam, notifique o cliente sobre a cobrança de horas adicionais (R$ 70,00/h).
+          </div>
+        `;
+      } else {
+        fill.style.backgroundColor = 'var(--danger)';
+        const excedente = totalHoras - limite;
+        const valorExtra = excedente * 70.0;
+        badge.innerHTML = '<span class="tag tag-red">Escopo Excedido</span>';
+        alerta.innerHTML = `
+          <div class="alert alert-danger">
+            🚨 <strong>Limite do Pacote Ultrapassado!</strong> Excedente de <strong>${excedente.toFixed(2)}h</strong>.
+            Valor adicional a faturar do cliente: <strong>R$ ${valorExtra.toFixed(2).replace('.', ',')}</strong> (tarifa R$ 70,00/h).
+          </div>
+        `;
+      }
+    }
+
+    function adicionarAtividade() {
+      const data = document.getElementById('lanc-data').value || new Date().toISOString().split('T')[0];
+      const tipo = document.getElementById('lanc-tipo').value;
+      const horas = parseFloat(document.getElementById('lanc-horas').value);
+      const desc = document.getElementById('lanc-desc').value.trim();
+
+      if (!horas || horas <= 0 || !desc) {
+        alert('Por favor, preencha a descrição e as horas gastas.');
+        return;
+      }
+
+      atividades.push({
+        id: Date.now(),
+        data,
+        tipo,
+        desc,
+        horas
+      });
+
+      document.getElementById('lanc-horas').value = '';
+      document.getElementById('lanc-desc').value = '';
+      renderAtividades();
+    }
+
+    function excluirAtividade(id) {
+      atividades = atividades.filter(a => a.id !== id);
+      renderAtividades();
+    }
+
+    // ABA 3: REEMBOLSOS E KM
+    let reembolsos = JSON.parse(localStorage.getItem('gp_reembolsos')) || [
+      { id: 1, data: '2026-11-13', destino: 'Hotel Terras Raras (Visita Técnica)', km: 40, estac: 0, zonaazul: 15, pedagio: 9.60 }
+    ];
+
+    function renderReembolsos() {
+      const tbody = document.getElementById('tabela-reembolso');
+      tbody.innerHTML = '';
+      let totalGeral = 0;
+
+      reembolsos.forEach(r => {
+        const vKm = r.km * 1.50;
+        const outros = (r.estac || 0) + (r.zonaazul || 0) + (r.pedagio || 0);
+        const subtotal = vKm + outros;
+        totalGeral += subtotal;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${formatarData(r.data)}</td>
+          <td>${r.destino}</td>
+          <td class="text-center">${r.km} km</td>
+          <td class="text-right">R$ ${vKm.toFixed(2).replace('.', ',')}</td>
+          <td class="text-right">R$ ${outros.toFixed(2).replace('.', ',')}</td>
+          <td class="text-right"><strong>R$ ${subtotal.toFixed(2).replace('.', ',')}</strong></td>
+          <td class="text-right">
+            <button style="border:none;background:none;color:#D32F2F;cursor:pointer;font-weight:bold;" onclick="excluirReembolso(${r.id})">✕</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('total-geral-reembolso').innerText = 'R$ ' + totalGeral.toFixed(2).replace('.', ',');
+      localStorage.setItem('gp_reembolsos', JSON.stringify(reembolsos));
+    }
+
+    function adicionarReembolso() {
+      const data = document.getElementById('reemb-data').value || new Date().toISOString().split('T')[0];
+      const destino = document.getElementById('reemb-destino').value.trim();
+      const km = parseFloat(document.getElementById('reemb-km').value) || 0;
+      const estac = parseFloat(document.getElementById('reemb-estac').value) || 0;
+      const zonaazul = parseFloat(document.getElementById('reemb-zonaazul').value) || 0;
+      const pedagio = parseFloat(document.getElementById('reemb-pedagio').value) || 0;
+
+      if (!destino) {
+        alert('Informe o destino ou motivo do deslocamento.');
+        return;
+      }
+
+      reembolsos.push({
+        id: Date.now(),
+        data,
+        destino,
+        km,
+        estac,
+        zonaazul,
+        pedagio
+      });
+
+      document.getElementById('reemb-destino').value = '';
+      document.getElementById('reemb-km').value = '';
+      document.getElementById('reemb-estac').value = '';
+      document.getElementById('reemb-zonaazul').value = '';
+      document.getElementById('reemb-pedagio').value = '';
+      renderReembolsos();
+    }
+
+    function excluirReembolso(id) {
+      reembolsos = reembolsos.filter(r => r.id !== id);
+      renderReembolsos();
+    }
+
+    function copiarRelatorioReembolso() {
+      let texto = `*DEMONSTRATIVO DE REEMBOLSO DE DESPESAS — GABI PRODUZ*\n\n`;
+      let totalGeral = 0;
+      reembolsos.forEach(r => {
+        const vKm = r.km * 1.50;
+        const outros = (r.estac || 0) + (r.zonaazul || 0) + (r.pedagio || 0);
+        const sub = vKm + outros;
+        totalGeral += sub;
+        texto += `• ${formatarData(r.data)} — ${r.destino}\n  Km rodado: ${r.km} km (R$ ${vKm.toFixed(2)})\n  Outros (estac/zona azul/pedágio): R$ ${outros.toFixed(2)}\n  Subtotal: R$ ${sub.toFixed(2)}\n\n`;
+      });
+      texto += `*TOTAL A REEMBOLSAR:* R$ ${totalGeral.toFixed(2).replace('.', ',')}\nChave PIX: financeiro@gabrielaprieto.com.br`;
+
+      navigator.clipboard.writeText(texto).then(() => {
+        alert('Relatório de reembolso copiado para a área de transferência!');
+      });
+    }
+
+    function formatarData(isoStr) {
+      if (!isoStr) return '-';
+      const p = isoStr.split('-');
+      if (p.length === 3) return `${p[2]}/${p[1]}/${p[0]}`;
+      return isoStr;
+    }
+
+    // Inicialização
+    window.onload = function() {
+      calcularOrcamento();
+      renderAtividades();
+      renderReembolsos();
+      document.getElementById('lanc-data').value = new Date().toISOString().split('T')[0];
+      document.getElementById('reemb-data').value = new Date().toISOString().split('T')[0];
+    };
+  </script>
+
+</body>
+</html>
+

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposta Comercial - Gabriela Prieto Produção Executiva</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap');
+
+    :root {
+      --color-plum: #48243F;
+      --color-mustard: #B18A38;
+      --color-graphite: #34313B;
+      --color-sand: #F7F3EE;
+      --color-sand-light: #FAF8F5;
+      --color-white: #FFFFFF;
+      --color-border: #E5DDD3;
+      --color-accent-soft: rgba(177, 138, 56, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--color-graphite);
+      background-color: #EDE8E1;
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+
+    .proposal-container {
+      max-width: 860px;
+      margin: 0 auto;
+      background: var(--color-white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(52, 49, 59, 0.08);
+      border: 1px solid var(--color-border);
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--color-plum) 0%, #30172A 100%);
+      color: var(--color-white);
+      padding: 40px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--color-mustard);
+    }
+
+    .brand-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--color-white);
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--color-mustard);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .brand-tagline {
+      font-size: 13px;
+      font-style: italic;
+      color: #D3C3CE;
+      margin-top: 6px;
+    }
+
+    .proposal-meta {
+      text-align: right;
+      font-size: 13px;
+      color: #E2D7E0;
+    }
+
+    .proposal-badge {
+      display: inline-block;
+      background-color: var(--color-mustard);
+      color: var(--color-white);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    /* Content */
+    .content-body {
+      padding: 48px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--color-plum);
+      font-size: 20px;
+      border-bottom: 2px solid var(--color-sand);
+      padding-bottom: 8px;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2:first-of-type {
+      margin-top: 0;
+    }
+
+    .section-num {
+      background-color: var(--color-mustard);
+      color: white;
+      font-size: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 2px 8px;
+      border-radius: 50%;
+      font-weight: 600;
+    }
+
+    /* Info Card Grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      background-color: var(--color-sand-light);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+    }
+
+    .info-item {
+      font-size: 14px;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: var(--color-plum);
+      display: block;
+      margin-bottom: 2px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      color: var(--color-graphite);
+    }
+
+    /* Scope Cards */
+    .scope-card {
+      background-color: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-left: 4px solid var(--color-plum);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+      transition: transform 0.2s;
+    }
+
+    .scope-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .scope-title {
+      font-weight: 700;
+      color: var(--color-plum);
+      font-size: 16px;
+    }
+
+    .scope-tag {
+      background: var(--color-accent-soft);
+      color: var(--color-mustard);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .scope-list {
+      list-style: none;
+      font-size: 13.5px;
+    }
+
+    .scope-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 6px;
+      color: #4A4652;
+    }
+
+    .scope-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--color-mustard);
+      font-weight: bold;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: var(--color-sand-light);
+      color: var(--color-plum);
+      font-weight: 700;
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--color-border);
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+
+    .col-right {
+      text-align: right;
+    }
+
+    .col-center {
+      text-align: center;
+    }
+
+    .total-row {
+      background-color: var(--color-sand);
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--color-plum);
+    }
+
+    .total-row td {
+      border-top: 2px solid var(--color-mustard);
+      border-bottom: none;
+    }
+
+    /* Conditions Alert Box */
+    .conditions-box {
+      background-color: var(--color-sand-light);
+      border-left: 4px solid var(--color-mustard);
+      padding: 18px;
+      border-radius: 4px;
+      font-size: 13px;
+      margin-top: 20px;
+    }
+
+    .conditions-box ol {
+      padding-left: 18px;
+    }
+
+    .conditions-box li {
+      margin-bottom: 6px;
+    }
+
+    /* Signatures */
+    .signature-section {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding-top: 20px;
+    }
+
+    .signature-box {
+      text-align: center;
+    }
+
+    .signature-line {
+      border-bottom: 1px solid var(--color-graphite);
+      margin-bottom: 10px;
+      height: 40px;
+    }
+
+    .signature-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--color-plum);
+    }
+
+    .signature-desc {
+      font-size: 12px;
+      color: #6E6877;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+      .proposal-container {
+        box-shadow: none;
+        border: none;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    .print-bar {
+      max-width: 860px;
+      margin: 0 auto 16px auto;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-action {
+      background: var(--color-plum);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-action:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="print-bar no-print">
+    <button class="btn-action" onclick="window.print()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+      Imprimir / Salvar como PDF
+    </button>
+  </div>
+
+  <div class="proposal-container">
+    <!-- Header -->
+    <header>
+      <div>
+        <div class="brand-title">Gabriela Prieto</div>
+        <div class="brand-subtitle">Produção Executiva Musical</div>
+        <div class="brand-tagline">"Ideias que acontecem."</div>
+      </div>
+      <div class="proposal-meta">
+        <span class="proposal-badge">Proposta Comercial</span>
+        <div><strong>Nº:</strong> PROP-2026-001</div>
+        <div><strong>Data:</strong> 18 de Novembro de 2026</div>
+        <div><strong>Validade:</strong> 7 dias úteis</div>
+      </div>
+    </header>
+
+    <div class="content-body">
+      <!-- Dados do Cliente e Evento -->
+      <h2><span class="section-num">1</span> Identificação do Projeto</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Contratante / Artista:</span>
+          <span class="info-value"><strong>Nome do Cliente / Empresa</strong></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Contato / Telefone:</span>
+          <span class="info-value">(00) 00000-0000 | contato@cliente.com</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Nome do Evento:</span>
+          <span class="info-value">Show Musical / Evento Corporativo</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Data e Local:</span>
+          <span class="info-value">10/12/2026 — São Paulo, SP</span>
+        </div>
+      </div>
+
+      <!-- Escopo dos Serviços -->
+      <h2><span class="section-num">2</span> Escopo de Serviços Contratados</h2>
+
+      <div class="scope-card">
+        <div class="scope-header">
+          <span class="scope-title">Módulo I: Pré-Produção Intermediária</span>
+          <span class="scope-tag">Até 9 horas de planejamento</span>
+        </div>
+        <ul class="scope-list">
+          <li>Levantamento técnico e alinhamento de briefing de necessidades;</li>
+          <li>Contato, alinhamento técnico e conferência com fornecedores e técnicos de som/luz;</li>
+          <li>Organização de cronograma operacional detalhado minuto a minuto;</li>
+          <li>Logística de transporte, camarim, catering e relação de acessos;</li>
+          <li>Até 2 reuniões online de alinhamento e repasse mestre com o contratante.</li>
+        </ul>
+      </div>
+
+      <div class="scope-card">
+        <div class="scope-header">
+          <span class="scope-title">Módulo II: Produção Presencial de Campo</span>
+          <span class="scope-tag">1 Diária de até 8h in loco</span>
+        </div>
+        <ul class="scope-list">
+          <li>Recepção e acolhimento dos artistas, banda e equipes técnicas;</li>
+          <li>Coordenação dos horários de montagem, passagem de som e passagem de palco;</li>
+          <li>Gestão de imprevistos em tempo real e comunicação com a administração do espaço;</li>
+          <li>Fiscalização do camarim, horários de entrada e saída e acompanhamento do encerramento.</li>
+        </ul>
+      </div>
+
+      <!-- Investimento -->
+      <h2><span class="section-num">3</span> Investimento e Condições</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Descrição do Serviço</th>
+            <th class="col-center">Referência</th>
+            <th class="col-right">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Pré-Produção Intermediária</strong><br><small style="color:#6E6877;">Horas dedicadas ao planejamento, articulação e cronogramas (até 9h)</small></td>
+            <td class="col-center">1 Pacote</td>
+            <td class="col-right">R$ 600,00</td>
+          </tr>
+          <tr>
+            <td><strong>Produção Presencial</strong><br><small style="color:#6E6877;">Acompanhamento integral in loco durante o dia do evento (até 8h)</small></td>
+            <td class="col-center">1 Diária</td>
+            <td class="col-right">R$ 650,00</td>
+          </tr>
+          <tr>
+            <td><strong>Deslocamento Estimado (Veículo Próprio)</strong><br><small style="color:#6E6877;">Quilometragem ida e volta estimada: 40 km a R$ 1,50/km</small></td>
+            <td class="col-center">40 km</td>
+            <td class="col-right">R$ 60,00</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="2">INVESTIMENTO TOTAL DOS HONORÁRIOS:</td>
+            <td class="col-right">R$ 1.310,00</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagamento e Reserva -->
+      <h2><span class="section-num">4</span> Forma de Pagamento e Reserva de Data</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Sinal de Reserva de Data (40%):</span>
+          <span class="info-value"><strong>R$ 524,00</strong> — no aceite da proposta (garante a agenda).</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Saldo Final (60%):</span>
+          <span class="info-value"><strong>R$ 786,00</strong> — quitado em até 24h antes do evento.</span>
+        </div>
+      </div>
+
+      <!-- Regras e Proteção de Escopo -->
+      <div class="conditions-box">
+        <strong>Condições e Proteção de Escopo:</strong>
+        <ol>
+          <li><strong>Garantia de Data:</strong> A data só é bloqueada na agenda mediante confirmação do sinal de reserva.</li>
+          <li><strong>Hora Técnica Excedente:</strong> Excedido o limite de 9h de pré-produção por demandas novas, será cobrado R$ 70,00/h (com aviso prévio ao cliente). Horas extras presenciais a R$ 90,00/h.</li>
+          <li><strong>Despesas Operacionais:</strong> Estacionamento, Zona Azul e pedágios são reembolsados mediante apresentação de comprovante após o evento.</li>
+        </ol>
+      </div>
+
+      <!-- Assinaturas -->
+      <div class="signature-section">
+        <div class="signature-box">
+          <div class="signature-line"></div>
+          <div class="signature-title">Gabriela Prieto</div>
+          <div class="signature-desc">Produção Executiva Musical</div>
+        </div>
+        <div class="signature-box">
+          <div class="signature-line"></div>
+          <div class="signature-title">[Nome do Contratante]</div>
+          <div class="signature-desc">De Acordo / Aceite do Escopo</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
+

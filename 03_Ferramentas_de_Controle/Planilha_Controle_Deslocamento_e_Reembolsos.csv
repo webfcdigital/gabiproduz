@@ -1,0 +1,4 @@
+Projeto,Data,Origem,Destino,Km_Trecho_Ida,Km_Trecho_Volta,Km_Total,Taxa_Km_R$,Valor_Km_R$,Zona_Azul_R$,Estacionamento_R$,Pedagio_R$,Outros_R$,Total_Reembolso_R$,Comprovante_Anexo
+"Show Zé Muniz - Hotel Terras Raras",2026-11-13,"Base Produtora (Pinheiros)","Hotel Terras Raras (Granja Viana)",20.0,20.0,40.0,1.50,60.00,15.00,0.00,9.60,0.00,84.60,"Sim - Recibo app Zona Azul + Sem Parar"
+"Show Zé Muniz - Hotel Terras Raras",2026-12-10,"Base Produtora (Pinheiros)","Hotel Terras Raras (Granja Viana)",20.0,20.0,40.0,1.50,60.00,0.00,35.00,9.60,0.00,104.60,"Sim - Ticket estacionamento local"
+
