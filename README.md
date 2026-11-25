@@ -103,3 +103,4 @@ git push -u origin main
    - **Build Command:** `cd sistema && npm run build`
    - **Output Directory:** `sistema/.next`
 4. Clique em **Deploy**. A aplicação estará online e acessível publicamente em segundos!
+

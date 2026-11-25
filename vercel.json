@@ -5,3 +5,4 @@
   "buildCommand": "cd sistema && npm run build",
   "outputDirectory": "sistema/.next"
 }
+
