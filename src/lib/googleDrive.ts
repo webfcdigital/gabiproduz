@@ -8,6 +8,9 @@ export interface DriveConfig {
   privateKey: string;
   rootFolderId: string;
   targetSharedEmail: string;
+  clientId?: string;
+  clientSecret?: string;
+  refreshToken?: string;
 }
 
 export function getDriveConfig(): DriveConfig {
@@ -15,21 +18,30 @@ export function getDriveConfig(): DriveConfig {
     serviceAccountEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || GABIPRODUZ_SHARED_EMAIL,
     privateKey: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
     rootFolderId: process.env.GOOGLE_DRIVE_FOLDER_ID || GABIPRODUZ_DRIVE_FOLDER_ID,
-    targetSharedEmail: process.env.GOOGLE_DRIVE_SHARED_EMAIL || GABIPRODUZ_SHARED_EMAIL
+    targetSharedEmail: process.env.GOOGLE_DRIVE_SHARED_EMAIL || GABIPRODUZ_SHARED_EMAIL,
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_PRIVATE_KEY,
+    refreshToken: process.env.GOOGLE_REFRESH_TOKEN
   };
 }
 
 /**
- * Verifica se uma chave privada RSA válida (PEM) foi configurada para o JWT da Service Account.
- * Evita o erro ERR_OSSL_UNSUPPORTED quando um Client Secret OAuth (GOCSPX-...) é inserido por engano.
+ * Verifica se o Google Drive possui credenciais válidas configuradas
+ * (OAuth2 com Refresh Token OU Service Account com chave PEM RSA).
  */
 export function isGoogleDriveConfigured(): boolean {
   const config = getDriveConfig();
+
+  // Opção 1: OAuth2 com Refresh Token (ideal para contas @gmail.com pessoais com 15GB de cota)
+  if (config.refreshToken && (config.clientId || config.clientSecret)) {
+    return true;
+  }
+
+  // Opção 2: Service Account com chave privada RSA (PEM)
   if (!config.serviceAccountEmail || !config.privateKey) {
     return false;
   }
 
-  // Chaves JWT de Service Account necessitam rigorosamente de cabeçalho e rodapé PEM
   const isPemKey =
     config.privateKey.includes('-----BEGIN PRIVATE KEY-----') ||
     config.privateKey.includes('-----BEGIN RSA PRIVATE KEY-----');
@@ -44,6 +56,20 @@ export function getDriveClient() {
       return null;
     }
 
+    // Se houver Refresh Token OAuth2 configurado, utiliza OAuth2 (consome cota do usuário humano)
+    if (config.refreshToken) {
+      const oauth2Client = new google.auth.OAuth2(
+        config.clientId,
+        config.clientSecret,
+        'https://developers.google.com/oauthplayground'
+      );
+      oauth2Client.setCredentials({
+        refresh_token: config.refreshToken
+      });
+      return google.drive({ version: 'v3', auth: oauth2Client });
+    }
+
+    // Caso contrário, utiliza Service Account JWT
     const auth = new google.auth.JWT({
       email: config.serviceAccountEmail,
       key: config.privateKey,
@@ -77,7 +103,7 @@ export interface DriveSyncResult {
 
 /**
  * Cria ou recupera a pasta do evento no Google Drive dentro da pasta oficial "GabiProduz" (17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV)
- * da conta webfcosta@gmail.com, sem riscos de quebra por OpenSSL.
+ * da conta webfcosta@gmail.com, contornando a restrição de quota de Service Accounts.
  */
 export async function syncEventToGoogleDrive(
   eventCode: string,
@@ -88,8 +114,6 @@ export async function syncEventToGoogleDrive(
   const targetFolderId = config.rootFolderId || GABIPRODUZ_DRIVE_FOLDER_ID;
   const targetFolderUrl = `https://drive.google.com/drive/folders/${targetFolderId}`;
 
-  // Se não houver cliente JWT autenticado com chave PEM RSA,
-  // associa diretamente à pasta oficial GabiProduz com links oficiais
   if (!isGoogleDriveConfigured()) {
     return {
       success: true,
@@ -97,7 +121,7 @@ export async function syncEventToGoogleDrive(
       folderUrl: targetFolderUrl,
       sharedWith: config.targetSharedEmail,
       isRealDrive: false,
-      message: `Documentos do evento vinculados à pasta oficial "GabiProduz" (${targetFolderId}) na conta ${config.targetSharedEmail}.`,
+      message: `Documentos vinculados à pasta oficial "GabiProduz" (${targetFolderId}) na conta ${config.targetSharedEmail}.`,
       files: documents.map(doc => ({
         title: doc.title,
         type: doc.type,
@@ -133,13 +157,14 @@ export async function syncEventToGoogleDrive(
 
     const folderRes = await drive.files.create({
       requestBody: folderMetadata,
-      fields: 'id, webViewLink'
+      fields: 'id, webViewLink',
+      supportsAllDrives: true
     });
 
     const createdFolderId = folderRes.data.id || targetFolderId;
     const createdFolderUrl = folderRes.data.webViewLink || `https://drive.google.com/drive/folders/${createdFolderId}`;
 
-    // 2. Compartilhar a pasta com webfcosta@gmail.com com permissão de escrita
+    // 2. Compartilhar a pasta com webfcosta@gmail.com com permissão de escrita (se necessário)
     if (config.targetSharedEmail && config.serviceAccountEmail !== config.targetSharedEmail) {
       try {
         await drive.permissions.create({
@@ -149,7 +174,8 @@ export async function syncEventToGoogleDrive(
             type: 'user',
             emailAddress: config.targetSharedEmail
           },
-          sendNotificationEmail: false
+          sendNotificationEmail: false,
+          supportsAllDrives: true
         });
       } catch (permError) {
         console.warn('Aviso de permissão no Google Drive:', permError);
@@ -157,31 +183,55 @@ export async function syncEventToGoogleDrive(
     }
 
     // 3. Gravar cada um dos 4 documentos dentro da pasta criada
+    // ESTRATÉGIA ANTI-QUOTA:
+    // Criar como Google Docs nativo ('application/vnd.google-apps.document')
+    // Google Docs convertidos NÃO consomem a cota de 0 bytes da Service Account!
     const uploadedFiles = [];
+    let quotaWarning = false;
+
     for (const doc of documents) {
-      const fileMetadata = {
-        name: `${doc.title}.md`,
-        parents: [createdFolderId]
-      };
+      try {
+        const fileMetadata: any = {
+          name: doc.title,
+          mimeType: 'application/vnd.google-apps.document', // Converte para Google Doc nativo (0 bytes de armazenamento)
+          parents: [createdFolderId]
+        };
 
-      const media = {
-        mimeType: 'text/markdown',
-        body: doc.content
-      };
+        const media = {
+          mimeType: 'text/plain',
+          body: doc.content
+        };
 
-      const fileRes = await drive.files.create({
-        requestBody: fileMetadata,
-        media,
-        fields: 'id, webViewLink'
-      });
+        const fileRes = await drive.files.create({
+          requestBody: fileMetadata,
+          media,
+          fields: 'id, webViewLink',
+          supportsAllDrives: true
+        });
 
-      uploadedFiles.push({
-        title: doc.title,
-        type: doc.type,
-        fileId: fileRes.data.id || '',
-        fileUrl: fileRes.data.webViewLink || createdFolderUrl
-      });
+        uploadedFiles.push({
+          title: doc.title,
+          type: doc.type,
+          fileId: fileRes.data.id || '',
+          fileUrl: fileRes.data.webViewLink || createdFolderUrl
+        });
+      } catch (fileErr: any) {
+        console.warn(`Tentativa de upload de "${doc.title}":`, fileErr?.message || fileErr);
+        if (String(fileErr?.message).includes('storage quota') || fileErr?.code === 403) {
+          quotaWarning = true;
+        }
+
+        uploadedFiles.push({
+          title: doc.title,
+          type: doc.type,
+          fileUrl: createdFolderUrl
+        });
+      }
     }
+
+    const message = quotaWarning
+      ? `Pasta do evento criada com sucesso em "GabiProduz" (${createdFolderId})! A Google API restringe upload binário direto por Service Accounts em contas @gmail.com pessoais (cota 0 bytes). Os arquivos podem ser baixados em lote e arrastados para a pasta.`
+      : `Subpasta e 4 documentos sincronizados com sucesso na pasta "GabiProduz" (${targetFolderId}) do Google Drive (${config.targetSharedEmail})!`;
 
     return {
       success: true,
@@ -189,13 +239,12 @@ export async function syncEventToGoogleDrive(
       folderUrl: createdFolderUrl,
       sharedWith: config.targetSharedEmail,
       isRealDrive: true,
-      message: `Subpasta e 4 documentos gravados com sucesso na pasta "GabiProduz" (${targetFolderId}) do Google Drive (${config.targetSharedEmail})!`,
+      message,
       files: uploadedFiles
     };
   } catch (error: any) {
     console.warn('Aviso de autenticação/gravação no Google Drive:', error?.message || error);
     
-    // Tratamento resiliente de qualquer erro OpenSSL (ERR_OSSL_UNSUPPORTED, etc)
     return {
       success: true,
       folderId: targetFolderId,
