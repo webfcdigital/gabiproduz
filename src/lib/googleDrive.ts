@@ -18,12 +18,16 @@ export function getDriveConfig(): DriveConfig {
 
 export function isGoogleDriveConfigured(): boolean {
   const config = getDriveConfig();
-  return Boolean(config.serviceAccountEmail && config.privateKey);
+  return Boolean(
+    config.serviceAccountEmail &&
+    config.privateKey &&
+    config.privateKey.includes('BEGIN PRIVATE KEY')
+  );
 }
 
 export function getDriveClient() {
   const config = getDriveConfig();
-  if (!config.serviceAccountEmail || !config.privateKey) {
+  if (!isGoogleDriveConfigured()) {
     return null;
   }
 

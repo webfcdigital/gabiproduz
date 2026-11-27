@@ -7,14 +7,16 @@ export async function GET() {
 
   if (!isConfigured) {
     return NextResponse.json({
-      status: 'pending_configuration',
+      status: config.rootFolderId ? 'folder_linked' : 'pending_configuration',
       targetEmail: config.targetSharedEmail,
       configured: false,
-      message: `Aguardando credenciais do Google Cloud para sincronização automática. A conta designada para compartilhamento de pastas é ${config.targetSharedEmail}.`,
+      folderId: config.rootFolderId,
+      folderUrl: `https://drive.google.com/drive/folders/${config.rootFolderId}`,
+      message: `Pasta oficial do Google Drive vinculada (${config.rootFolderId}) para ${config.targetSharedEmail}. Os documentos apontam diretamente para o repositório em nuvem.`,
       requiredEnvVars: [
         'GOOGLE_SERVICE_ACCOUNT_EMAIL',
-        'GOOGLE_PRIVATE_KEY',
-        'GOOGLE_DRIVE_FOLDER_ID (opcional)'
+        'GOOGLE_PRIVATE_KEY (chave RSA)',
+        'GOOGLE_DRIVE_FOLDER_ID'
       ]
     });
   }

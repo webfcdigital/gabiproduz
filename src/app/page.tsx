@@ -16,7 +16,8 @@ import { GoogleDriveManager } from '../components/GoogleDriveManager';
 import { CrmManager } from '../components/CrmManager';
 import { DocumentEditorModal } from '../components/DocumentEditorModal';
 import { NewEventModal } from '../components/NewEventModal';
-import { FileText, FolderSync, ExternalLink } from 'lucide-react';
+import { AuthModal } from '../components/AuthModal';
+import { FileText, FolderSync, ExternalLink, Loader2 } from 'lucide-react';
 
 function MainApp() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -24,7 +25,17 @@ function MainApp() {
   const [selectedEventIdForPreProd, setSelectedEventIdForPreProd] = useState<string | undefined>(undefined);
   const [isNewEventModalOpen, setIsNewEventModalOpen] = useState<boolean>(false);
 
-  const { events, documents, currentUser, artists, contractors } = useApp();
+  const {
+    events,
+    documents,
+    currentUser,
+    artists,
+    contractors,
+    isAuthModalOpen,
+    setIsAuthModalOpen,
+    dbLoading,
+    isDbConnected
+  } = useApp();
 
   const handleSelectEvent = (eventId: string) => {
     setSelectedEventIdForPreProd(eventId);
@@ -58,6 +69,14 @@ function MainApp() {
         {/* Área de Conteúdo */}
         <main className="flex-1 p-6 md:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
           
+          {/* Se estiver carregando banco inicial */}
+          {dbLoading && (
+            <div className="mb-4 bg-white/70 border border-[#E5DDD3] p-3 rounded-xl flex items-center space-x-2 text-xs text-[#6E6877]">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-[#B18A38]" />
+              <span>Sincronizando com Supabase PostgreSQL...</span>
+            </div>
+          )}
+
           {/* Se perfil for Contratante: Exibe Portal do Contratante */}
           {currentUser.role === 'contratante' ? (
             <ContractorPortal onOpenDocument={handleOpenDocuments} />
@@ -239,6 +258,12 @@ function MainApp() {
           onEventCreated={handleEventCreated}
         />
       )}
+
+      {/* Modal de Autenticação / Troca de Perfil */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
 
     </div>
   );
