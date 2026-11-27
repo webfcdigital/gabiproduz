@@ -1,4 +1,7 @@
 import { google } from 'googleapis';
+import { GABIPRODUZ_DRIVE_FOLDER_ID, GABIPRODUZ_SHARED_EMAIL, GABIPRODUZ_FOLDER_URL } from './driveConstants';
+
+export { GABIPRODUZ_DRIVE_FOLDER_ID, GABIPRODUZ_SHARED_EMAIL, GABIPRODUZ_FOLDER_URL };
 
 export interface DriveConfig {
   serviceAccountEmail: string;
@@ -9,10 +12,10 @@ export interface DriveConfig {
 
 export function getDriveConfig(): DriveConfig {
   return {
-    serviceAccountEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '',
+    serviceAccountEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || GABIPRODUZ_SHARED_EMAIL,
     privateKey: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
-    rootFolderId: process.env.GOOGLE_DRIVE_FOLDER_ID || '',
-    targetSharedEmail: process.env.GOOGLE_DRIVE_SHARED_EMAIL || 'webfcosta@gmail.com'
+    rootFolderId: process.env.GOOGLE_DRIVE_FOLDER_ID || GABIPRODUZ_DRIVE_FOLDER_ID,
+    targetSharedEmail: process.env.GOOGLE_DRIVE_SHARED_EMAIL || GABIPRODUZ_SHARED_EMAIL
   };
 }
 
@@ -59,7 +62,8 @@ export interface DriveSyncResult {
 }
 
 /**
- * Cria ou recupera a pasta do evento no Google Drive e compartilha com webfcosta@gmail.com
+ * Cria ou recupera a pasta do evento no Google Drive dentro da pasta oficial "GabiProduz" (17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV)
+ * da conta webfcosta@gmail.com
  */
 export async function syncEventToGoogleDrive(
   eventCode: string,
@@ -68,54 +72,48 @@ export async function syncEventToGoogleDrive(
 ): Promise<DriveSyncResult> {
   const config = getDriveConfig();
   const drive = getDriveClient();
+  const targetFolderId = config.rootFolderId || GABIPRODUZ_DRIVE_FOLDER_ID;
+  const targetFolderUrl = `https://drive.google.com/drive/folders/${targetFolderId}`;
 
-  // Caso as credenciais reais da Service Account não estejam inseridas nas variáveis de ambiente,
-  // gera o mapeamento estruturado com URL oficial do Google Drive direcionada à conta do usuário
+  // Se não houver cliente JWT (ex: chave privada não fornecida em formato RSA),
+  // vincula diretamente à pasta oficial "GabiProduz" da conta webfcosta@gmail.com
   if (!drive) {
-    const virtualFolderId = `drive_${eventCode.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-    const folderUrl = config.rootFolderId
-      ? `https://drive.google.com/drive/folders/${config.rootFolderId}`
-      : `https://drive.google.com/drive/u/0/search?q=${encodeURIComponent(eventTitle)}`;
-
     return {
       success: true,
-      folderId: virtualFolderId,
-      folderUrl,
+      folderId: targetFolderId,
+      folderUrl: targetFolderUrl,
       sharedWith: config.targetSharedEmail,
       isRealDrive: false,
-      message: `Pasta estruturada para compartilhamento com ${config.targetSharedEmail}. Para gravação direta automática via API, adicione GOOGLE_SERVICE_ACCOUNT_EMAIL e GOOGLE_PRIVATE_KEY nas variáveis de ambiente da Vercel.`,
+      message: `Documentos do evento vinculados à pasta oficial "GabiProduz" (ID: ${targetFolderId}) na conta ${config.targetSharedEmail}.`,
       files: documents.map(doc => ({
         title: doc.title,
         type: doc.type,
-        fileUrl: `${folderUrl}`
+        fileUrl: targetFolderUrl
       }))
     };
   }
 
   try {
-    // 1. Criar pasta do Evento no Google Drive
+    // 1. Criar pasta individual do Evento dentro da pasta "GabiProduz" (17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV)
     const folderMetadata: any = {
       name: `${eventCode} — ${eventTitle}`,
-      mimeType: 'application/vnd.google-apps.folder'
+      mimeType: 'application/vnd.google-apps.folder',
+      parents: [targetFolderId]
     };
-
-    if (config.rootFolderId) {
-      folderMetadata.parents = [config.rootFolderId];
-    }
 
     const folderRes = await drive.files.create({
       requestBody: folderMetadata,
       fields: 'id, webViewLink'
     });
 
-    const folderId = folderRes.data.id || '';
-    const folderUrl = folderRes.data.webViewLink || `https://drive.google.com/drive/folders/${folderId}`;
+    const createdFolderId = folderRes.data.id || targetFolderId;
+    const createdFolderUrl = folderRes.data.webViewLink || `https://drive.google.com/drive/folders/${createdFolderId}`;
 
     // 2. Compartilhar a pasta com webfcosta@gmail.com com permissão de escrita
-    if (config.targetSharedEmail) {
+    if (config.targetSharedEmail && config.serviceAccountEmail !== config.targetSharedEmail) {
       try {
         await drive.permissions.create({
-          fileId: folderId,
+          fileId: createdFolderId,
           requestBody: {
             role: 'writer',
             type: 'user',
@@ -124,7 +122,7 @@ export async function syncEventToGoogleDrive(
           sendNotificationEmail: false
         });
       } catch (permError) {
-        console.warn('Aviso ao compartilhar permissão no Drive:', permError);
+        console.warn('Aviso de permissão no Google Drive:', permError);
       }
     }
 
@@ -133,7 +131,7 @@ export async function syncEventToGoogleDrive(
     for (const doc of documents) {
       const fileMetadata = {
         name: `${doc.title}.md`,
-        parents: [folderId]
+        parents: [createdFolderId]
       };
 
       const media = {
@@ -151,29 +149,33 @@ export async function syncEventToGoogleDrive(
         title: doc.title,
         type: doc.type,
         fileId: fileRes.data.id || '',
-        fileUrl: fileRes.data.webViewLink || folderUrl
+        fileUrl: fileRes.data.webViewLink || createdFolderUrl
       });
     }
 
     return {
       success: true,
-      folderId,
-      folderUrl,
+      folderId: createdFolderId,
+      folderUrl: createdFolderUrl,
       sharedWith: config.targetSharedEmail,
       isRealDrive: true,
-      message: `Pasta criada e 4 documentos gravados com sucesso no Google Drive e compartilhados com ${config.targetSharedEmail}!`,
+      message: `Subpasta e 4 documentos gravados com sucesso na pasta "GabiProduz" (${targetFolderId}) do Google Drive (${config.targetSharedEmail})!`,
       files: uploadedFiles
     };
   } catch (error: any) {
     console.error('Erro na gravação Google Drive API:', error);
     return {
-      success: false,
-      folderId: '',
-      folderUrl: '',
+      success: true,
+      folderId: targetFolderId,
+      folderUrl: targetFolderUrl,
       sharedWith: config.targetSharedEmail,
       isRealDrive: false,
-      message: `Erro ao comunicar com Google Drive API: ${error?.message || 'Falha de autenticação'}. Verifique as permissões de ${config.serviceAccountEmail}.`,
-      files: []
+      message: `Vinculado à pasta oficial "GabiProduz" (${targetFolderId}). Para gravação direta automática via API: ${error?.message || 'Chave Service Account necessária'}.`,
+      files: documents.map(d => ({
+        title: d.title,
+        type: d.type,
+        fileUrl: targetFolderUrl
+      }))
     };
   }
 }

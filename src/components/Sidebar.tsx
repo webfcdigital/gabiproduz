@@ -14,8 +14,10 @@ import {
   Building,
   CheckCircle2,
   FolderSync,
-  Database
+  Database,
+  ExternalLink
 } from 'lucide-react';
+import { GABIPRODUZ_FOLDER_URL } from '../lib/driveConstants';
 
 interface SidebarProps {
   activeTab: string;
@@ -123,6 +125,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
         <p className="text-[10px] text-[#6E6877] truncate font-mono">
           webfcosta@gmail.com
         </p>
+        <a
+          href={GABIPRODUZ_FOLDER_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="text-[10px] text-[#B18A38] hover:underline flex items-center justify-between font-semibold"
+          title="Abrir Pasta Oficial GabiProduz (17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV)"
+        >
+          <span>Pasta: GabiProduz</span>
+          <ExternalLink className="w-2.5 h-2.5" />
+        </a>
 
         <div className="border-t border-[#E5DDD3] pt-2 flex items-center justify-between text-[#48243F]">
           <div className="flex items-center space-x-1.5">

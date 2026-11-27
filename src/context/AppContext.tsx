@@ -337,7 +337,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const newId = 'evt-' + Date.now();
     const eventCount = events.length + 1;
     const code = `EVT-2026-${String(eventCount).padStart(3, '0')}`;
-    const folderId = `drive-folder-${newId}`;
+    const folderId = '17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV';
     const folderUrl = `https://drive.google.com/drive/folders/17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV`;
 
     const newEvent: EventItem = {

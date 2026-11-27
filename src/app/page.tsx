@@ -18,6 +18,7 @@ import { DocumentEditorModal } from '../components/DocumentEditorModal';
 import { NewEventModal } from '../components/NewEventModal';
 import { AuthModal } from '../components/AuthModal';
 import { FileText, FolderSync, ExternalLink, Loader2 } from 'lucide-react';
+import { GABIPRODUZ_FOLDER_URL } from '../lib/driveConstants';
 
 function MainApp() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -204,7 +205,7 @@ function MainApp() {
                               </button>
 
                               <a
-                                href={event.googleDriveFolderUrl}
+                                href={event.googleDriveFolderUrl || GABIPRODUZ_FOLDER_URL}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="text-xs text-[#B18A38] hover:underline font-semibold flex items-center space-x-1"
