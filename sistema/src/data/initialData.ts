@@ -220,8 +220,8 @@ export const initialEvents: EventItem[] = [
     signalPaid: true,
     balanceFee: 858, // 60%
     balancePaid: false,
-    googleDriveFolderId: 'drive-folder-kiki-001',
-    googleDriveFolderUrl: 'https://drive.google.com/drive/folders/1A2B3C_KikiDancas_2026',
+    googleDriveFolderId: '17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV',
+    googleDriveFolderUrl: 'https://drive.google.com/drive/folders/17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV',
     driveSyncStatus: 'synced',
     notes: 'Evento com foco em pontualidade estrita na passagem de som (17h30 às 18h00).'
   },
@@ -250,8 +250,8 @@ export const initialEvents: EventItem[] = [
     signalPaid: true,
     balanceFee: 1176,
     balancePaid: false,
-    googleDriveFolderId: 'drive-folder-terrasraras-002',
-    googleDriveFolderUrl: 'https://drive.google.com/drive/folders/2B3C4D_TerrasRaras_2026',
+    googleDriveFolderId: '17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV',
+    googleDriveFolderUrl: 'https://drive.google.com/drive/folders/17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV',
     driveSyncStatus: 'synced',
     notes: 'Visita técnica realizada em 13/11. Captação de imagens verticais de bastidores contratada.'
   },
@@ -280,8 +280,8 @@ export const initialEvents: EventItem[] = [
     signalPaid: false,
     balanceFee: 802.5,
     balancePaid: false,
-    googleDriveFolderId: 'drive-folder-alfatech-003',
-    googleDriveFolderUrl: 'https://drive.google.com/drive/folders/3C4D5E_AlfaTech_2026',
+    googleDriveFolderId: '17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV',
+    googleDriveFolderUrl: 'https://drive.google.com/drive/folders/17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV',
     driveSyncStatus: 'pending',
     notes: 'Aguardando validação da diretoria da Alfa Tech para assinatura de contrato.'
   }

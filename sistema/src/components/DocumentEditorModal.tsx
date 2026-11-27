@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { EventDocument } from '../types';
-import { FileText, Save, CheckCircle2, ExternalLink, Printer, X, Sparkles, FolderSync } from 'lucide-react';
+import { FileText, Save, CheckCircle2, ExternalLink, Printer, X, Sparkles, FolderSync, Download } from 'lucide-react';
+import { GABIPRODUZ_FOLDER_URL } from '../lib/driveConstants';
 
 interface DocumentEditorModalProps {
   eventId: string;
@@ -49,6 +50,19 @@ export const DocumentEditorModal: React.FC<DocumentEditorModalProps> = ({ eventI
     setIsSyncing(false);
   };
 
+  const handleDownloadDoc = () => {
+    if (!activeDoc) return;
+    const blob = new Blob([activeDoc.content], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${event?.code || 'EVT'}_${activeDoc.title.replace(/[^a-zA-Z0-9]/g, '_')}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   if (!event) return null;
 
   return (
@@ -73,13 +87,24 @@ export const DocumentEditorModal: React.FC<DocumentEditorModalProps> = ({ eventI
           </div>
 
           <div className="flex items-center space-x-2">
+            <a
+              href={GABIPRODUZ_FOLDER_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition hidden sm:flex"
+              title="Abrir Pasta Oficial GabiProduz no Google Drive (17OB8wMYr2niZs63iNPNb1l4XQjxTDRlV)"
+            >
+              <span>Pasta GabiProduz</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+
             <button
               onClick={handleSyncDrive}
               disabled={isSyncing}
-              className="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1.5 rounded-lg flex items-center space-x-1 transition"
+              className="bg-[#B18A38] hover:bg-[#CBA24B] text-white text-xs px-3 py-1.5 rounded-lg flex items-center space-x-1 transition shadow-sm"
             >
               <FolderSync className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
-              <span>{isSyncing ? 'Sincronizando...' : 'Sincronizar com Drive'}</span>
+              <span>{isSyncing ? 'Sincronizando...' : 'Gravar no Drive'}</span>
             </button>
             <button
               onClick={onClose}
@@ -188,6 +213,13 @@ export const DocumentEditorModal: React.FC<DocumentEditorModalProps> = ({ eventI
                       className="bg-[#48243F] hover:bg-[#5E3253] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition"
                     >
                       Editar Documento
+                    </button>
+                    <button
+                      onClick={handleDownloadDoc}
+                      className="p-1.5 border border-[#E5DDD3] rounded-lg text-[#6E6877] hover:bg-gray-50 flex items-center space-x-1"
+                      title="Baixar Arquivo Markdown (.md) para o Google Drive"
+                    >
+                      <Download className="w-4 h-4 text-[#B18A38]" />
                     </button>
                     <button
                       onClick={() => window.print()}

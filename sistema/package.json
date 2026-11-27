@@ -9,11 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
+    "@tailwindcss/postcss": "^4.3.5",
     "clsx": "^2.1.1",
+    "googleapis": "^190.0.0",
+    "has-flag": "^5.0.1",
     "lucide-react": "^1.80.0",
     "next": "16.4.6",
+    "postcss": "^8.5.34",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "supports-color": "^11.0.0",
     "tailwind-merge": "^3.7.1"
   },
   "devDependencies": {
@@ -23,7 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
-    "tailwindcss": "4.3.3",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5"
   }
 }

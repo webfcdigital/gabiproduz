@@ -16,37 +16,36 @@ export interface DriveConfig {
 export function getDriveConfig(): DriveConfig {
   return {
     serviceAccountEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || GABIPRODUZ_SHARED_EMAIL,
-    privateKey: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+    privateKey: (process.env.GOOGLE_DRIVE_PRIVATE_KEY || process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
     rootFolderId: process.env.GOOGLE_DRIVE_FOLDER_ID || GABIPRODUZ_DRIVE_FOLDER_ID,
     targetSharedEmail: process.env.GOOGLE_DRIVE_SHARED_EMAIL || GABIPRODUZ_SHARED_EMAIL,
     clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_PRIVATE_KEY,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     refreshToken: process.env.GOOGLE_REFRESH_TOKEN
   };
 }
 
 /**
  * Verifica se o Google Drive possui credenciais válidas configuradas
- * (OAuth2 com Refresh Token OU Service Account com chave PEM RSA).
+ * (Service Account com chave PEM RSA OU OAuth2 com Refresh Token).
  */
 export function isGoogleDriveConfigured(): boolean {
   const config = getDriveConfig();
 
-  // Opção 1: OAuth2 com Refresh Token (ideal para contas @gmail.com pessoais com 15GB de cota)
-  if (config.refreshToken && (config.clientId || config.clientSecret)) {
+  const hasPemKey =
+    config.privateKey &&
+    (config.privateKey.includes('-----BEGIN PRIVATE KEY-----') ||
+     config.privateKey.includes('-----BEGIN RSA PRIVATE KEY-----'));
+
+  if (hasPemKey && config.serviceAccountEmail) {
     return true;
   }
 
-  // Opção 2: Service Account com chave privada RSA (PEM)
-  if (!config.serviceAccountEmail || !config.privateKey) {
-    return false;
+  if (config.refreshToken && config.clientId && config.clientSecret) {
+    return true;
   }
 
-  const isPemKey =
-    config.privateKey.includes('-----BEGIN PRIVATE KEY-----') ||
-    config.privateKey.includes('-----BEGIN RSA PRIVATE KEY-----');
-
-  return isPemKey;
+  return false;
 }
 
 export function getDriveClient() {
@@ -56,8 +55,26 @@ export function getDriveClient() {
       return null;
     }
 
-    // Se houver Refresh Token OAuth2 configurado, utiliza OAuth2 (consome cota do usuário humano)
-    if (config.refreshToken) {
+    const hasPemKey =
+      config.privateKey &&
+      (config.privateKey.includes('-----BEGIN PRIVATE KEY-----') ||
+       config.privateKey.includes('-----BEGIN RSA PRIVATE KEY-----'));
+
+    // Prioridade 1: Service Account com chave PEM RSA válida
+    if (hasPemKey && config.serviceAccountEmail) {
+      const auth = new google.auth.JWT({
+        email: config.serviceAccountEmail,
+        key: config.privateKey,
+        scopes: [
+          'https://www.googleapis.com/auth/drive',
+          'https://www.googleapis.com/auth/drive.file'
+        ]
+      });
+      return google.drive({ version: 'v3', auth });
+    }
+
+    // Prioridade 2: OAuth2 com Refresh Token
+    if (config.refreshToken && config.clientId && config.clientSecret) {
       const oauth2Client = new google.auth.OAuth2(
         config.clientId,
         config.clientSecret,
@@ -69,17 +86,7 @@ export function getDriveClient() {
       return google.drive({ version: 'v3', auth: oauth2Client });
     }
 
-    // Caso contrário, utiliza Service Account JWT
-    const auth = new google.auth.JWT({
-      email: config.serviceAccountEmail,
-      key: config.privateKey,
-      scopes: [
-        'https://www.googleapis.com/auth/drive',
-        'https://www.googleapis.com/auth/drive.file'
-      ]
-    });
-
-    return google.drive({ version: 'v3', auth });
+    return null;
   } catch (error) {
     console.error('Erro ao instanciar cliente Google Drive:', error);
     return null;
@@ -111,8 +118,10 @@ export async function syncEventToGoogleDrive(
   documents: { type: string; title: string; content: string }[]
 ): Promise<DriveSyncResult> {
   const config = getDriveConfig();
+  const drive = getDriveClient();
   const targetFolderId = config.rootFolderId || GABIPRODUZ_DRIVE_FOLDER_ID;
   const targetFolderUrl = `https://drive.google.com/drive/folders/${targetFolderId}`;
+
 
   if (!isGoogleDriveConfigured()) {
     return {
@@ -130,7 +139,6 @@ export async function syncEventToGoogleDrive(
     };
   }
 
-  const drive = getDriveClient();
   if (!drive) {
     return {
       success: true,
@@ -244,7 +252,7 @@ export async function syncEventToGoogleDrive(
     };
   } catch (error: any) {
     console.warn('Aviso de autenticação/gravação no Google Drive:', error?.message || error);
-    
+
     return {
       success: true,
       folderId: targetFolderId,
