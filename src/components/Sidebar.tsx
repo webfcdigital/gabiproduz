@@ -13,7 +13,8 @@ import {
   Music,
   Building,
   CheckCircle2,
-  FolderSync
+  FolderSync,
+  Database
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -110,15 +111,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
         })}
       </nav>
 
-      {/* Banner de Sincronização Google Drive */}
-      <div className="p-4 m-3 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs text-[#6E6877]">
-        <div className="flex items-center space-x-2 text-[#48243F] font-semibold mb-1">
-          <FolderSync className="w-4 h-4 text-[#B18A38]" />
-          <span>Google Workspace API</span>
+      {/* Banner de Sincronização Google Drive & Supabase */}
+      <div className="p-3.5 m-3 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs space-y-2">
+        <div className="flex items-center justify-between text-[#48243F] font-semibold">
+          <div className="flex items-center space-x-1.5">
+            <FolderSync className="w-3.5 h-3.5 text-[#B18A38]" />
+            <span className="text-[11px]">Google Drive</span>
+          </div>
+          <span className="text-[9px] bg-green-100 text-green-800 font-bold px-1.5 py-0.5 rounded">Ativo</span>
         </div>
-        <p className="leading-tight text-[11px]">
-          Pastas e documentos são sincronizados automaticamente por evento.
+        <p className="text-[10px] text-[#6E6877] truncate font-mono">
+          webfcosta@gmail.com
         </p>
+
+        <div className="border-t border-[#E5DDD3] pt-2 flex items-center justify-between text-[#48243F]">
+          <div className="flex items-center space-x-1.5">
+            <Database className="w-3.5 h-3.5 text-[#B18A38]" />
+            <span className="text-[11px] font-semibold">PostgreSQL</span>
+          </div>
+          <span className="text-[9px] bg-[#48243F] text-white font-bold px-1.5 py-0.5 rounded">Supabase</span>
+        </div>
       </div>
 
     </aside>
