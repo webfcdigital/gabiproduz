@@ -35,7 +35,7 @@ export function isGoogleDriveConfigured(): boolean {
   const hasPemKey =
     config.privateKey &&
     (config.privateKey.includes('-----BEGIN PRIVATE KEY-----') ||
-     config.privateKey.includes('-----BEGIN RSA PRIVATE KEY-----'));
+      config.privateKey.includes('-----BEGIN RSA PRIVATE KEY-----'));
 
   if (hasPemKey && config.serviceAccountEmail) {
     return true;
@@ -57,8 +57,7 @@ export function getDriveClient(preferOAuth: boolean = true) {
 
     const hasPemKey =
       config.privateKey &&
-      (config.privateKey.includes('-----BEGIN PRIVATE KEY-----') ||
-       config.privateKey.includes('-----BEGIN RSA PRIVATE KEY-----'));
+      (config.privateKey.includes('-----BEGIN PRIVATE KEY-----'));
 
     // PRIORIDADE 1 (PADRÃO): OAuth2 User Delegation
     // Grava pastas e arquivos diretamente na conta do usuário (webfcosta@gmail.com) com 15 GB de cota
