@@ -29,23 +29,27 @@ export async function GET() {
   }
 
   try {
-    const drive = getDriveClient();
+    const drive = getDriveClient(true);
     if (!drive) throw new Error('Cliente Google Drive não pôde ser instanciado');
 
     const res = await drive.files.get({
       fileId: folderId,
-      fields: 'id, name, mimeType, webViewLink'
+      fields: 'id, name, mimeType, webViewLink',
+      supportsAllDrives: true
     });
+
+    const isOAuth = Boolean(config.refreshToken && config.clientId && config.clientSecret);
 
     return NextResponse.json({
       status: 'connected',
+      mode: isOAuth ? 'OAuth2 Delegation (Quota do Usuário)' : 'Service Account JWT',
       folderName: res.data.name || 'GabiProduz',
       folderId: res.data.id || folderId,
       folderUrl: res.data.webViewLink || folderUrl,
       targetEmail,
       configured: true,
       serviceAccount: config.serviceAccountEmail,
-      message: `Conexão ativa com o Google Drive! Arquivos são gravados diretamente na pasta "${res.data.name || 'GabiProduz'}" (${folderId}).`
+      message: `Conexão ativa com o Google Drive via ${isOAuth ? 'OAuth2 User Delegation (grava pastas e arquivos com sua cota de 15GB)' : 'Service Account JWT'}! Destino oficial: "${res.data.name || 'GabiProduz'}" (${folderId}).`
     });
   } catch (error: any) {
     return NextResponse.json({

@@ -48,7 +48,7 @@ export function isGoogleDriveConfigured(): boolean {
   return false;
 }
 
-export function getDriveClient() {
+export function getDriveClient(preferOAuth: boolean = true) {
   try {
     const config = getDriveConfig();
     if (!isGoogleDriveConfigured()) {
@@ -60,7 +60,21 @@ export function getDriveClient() {
       (config.privateKey.includes('-----BEGIN PRIVATE KEY-----') ||
        config.privateKey.includes('-----BEGIN RSA PRIVATE KEY-----'));
 
-    // Prioridade 1: Service Account com chave PEM RSA válida
+    // PRIORIDADE 1 (PADRÃO): OAuth2 User Delegation
+    // Grava pastas e arquivos diretamente na conta do usuário (webfcosta@gmail.com) com 15 GB de cota
+    if (preferOAuth && config.refreshToken && config.clientId && config.clientSecret) {
+      const oauth2Client = new google.auth.OAuth2(
+        config.clientId,
+        config.clientSecret,
+        'https://developers.google.com/oauthplayground'
+      );
+      oauth2Client.setCredentials({
+        refresh_token: config.refreshToken
+      });
+      return google.drive({ version: 'v3', auth: oauth2Client });
+    }
+
+    // PRIORIDADE 2 (FALLBACK): Service Account com chave PEM RSA válida
     if (hasPemKey && config.serviceAccountEmail) {
       const auth = new google.auth.JWT({
         email: config.serviceAccountEmail,
@@ -73,7 +87,7 @@ export function getDriveClient() {
       return google.drive({ version: 'v3', auth });
     }
 
-    // Prioridade 2: OAuth2 com Refresh Token
+    // Se preferOAuth era false mas existe OAuth configurado
     if (config.refreshToken && config.clientId && config.clientSecret) {
       const oauth2Client = new google.auth.OAuth2(
         config.clientId,
@@ -118,10 +132,9 @@ export async function syncEventToGoogleDrive(
   documents: { type: string; title: string; content: string }[]
 ): Promise<DriveSyncResult> {
   const config = getDriveConfig();
-  const drive = getDriveClient();
+  let drive = getDriveClient(true); // Prioriza OAuth delegation como padrão
   const targetFolderId = config.rootFolderId || GABIPRODUZ_DRIVE_FOLDER_ID;
   const targetFolderUrl = `https://drive.google.com/drive/folders/${targetFolderId}`;
-
 
   if (!isGoogleDriveConfigured()) {
     return {
@@ -163,13 +176,40 @@ export async function syncEventToGoogleDrive(
       parents: [targetFolderId]
     };
 
-    const folderRes = await drive.files.create({
-      requestBody: folderMetadata,
-      fields: 'id, webViewLink',
-      supportsAllDrives: true
-    });
+    let folderRes: any;
+    try {
+      folderRes = await drive.files.create({
+        requestBody: folderMetadata,
+        fields: 'id, webViewLink',
+        supportsAllDrives: true
+      });
+    } catch (authErr: any) {
+      // Se OAuth falhar por credenciais/token inválido, tenta fallback para Service Account JWT
+      const isAuthErr =
+        authErr?.code === 401 ||
+        String(authErr?.message).includes('invalid_client') ||
+        String(authErr?.message).includes('unauthorized') ||
+        String(authErr?.message).includes('invalid_grant');
 
-    const createdFolderId = folderRes.data.id || targetFolderId;
+      if (isAuthErr) {
+        console.warn('OAuth delegation falhou ou requer reautorização. Executando fallback para Service Account JWT:', authErr?.message);
+        const saDrive = getDriveClient(false);
+        if (saDrive) {
+          drive = saDrive;
+          folderRes = await drive.files.create({
+            requestBody: folderMetadata,
+            fields: 'id, webViewLink',
+            supportsAllDrives: true
+          });
+        } else {
+          throw authErr;
+        }
+      } else {
+        throw authErr;
+      }
+    }
+
+    const createdFolderId = folderRes?.data?.id || targetFolderId;
     const createdFolderUrl = folderRes.data.webViewLink || `https://drive.google.com/drive/folders/${createdFolderId}`;
 
     // 2. Compartilhar a pasta com webfcosta@gmail.com com permissão de escrita (se necessário)
